@@ -7,82 +7,51 @@ except ImportError:
 import time
 import json 
 import sys
-#import pygame
-#import pyaudio
 
 lastTime = 0
-fileName = 'H(test).json'
+fileName = 'test.json'
 label = 8
-
-print("Hello World")
-
 f = open(fileName,)
 finalData = json.load(f,)
-
-print(len(finalData))
 numData = -1
 numCurFrame = 0
-
 Left = []
 Right = []
 newData = []
-#flag = 0
-#pygame.mixer.init()
+
 
 def on_message(ws, message):
+    global numData
     global lastTime
     global numCurFrame
-    global numData
-    global Left
-    global Right
-    global finalData
-    global newData
-    
+
     data = json.loads(message)
-
-    curTime = int(round(time.time() * 10 )) 
-
+    curTime = time.time() * 10 
     data['label'] = label
 
+    print("Numdata", numData)
+    print("Time: ", curTime)
+    print("LastTime: ", lastTime)
 
-    if curTime - lastTime >= 1 : 
-        #print(curTime)
-        #print(lastTime)
-
+    if curTime - lastTime >= 0.5 : 
         lastTime = curTime
         numCurFrame += 1
+        print("Numcurframe: ",numCurFrame)
 
-        print("[",numCurFrame , "]")
-
-        newData.append(data)
-
-        if numCurFrame == 5:
+        if numCurFrame == 1:
             numCurFrame = 0
             numData += 1
-            print(numData)
-            print('-----------------------------------------------')
-            print("Waiting...")
+            print("Numdata: ", numData)
 
-            lastTime += 2
-
-            finalData.append(newData)
-            newData = []
-
-            print("Start collecting...")
-
-    if numData == 100:
-        #pygame.mixer.music.load("ring.mp3")
-        #pygame.mixer.music.play()
-        print(len(finalData))
-        finalData.pop(0)
-        with open(fileName, 'w') as outfile:
-                json.dump(finalData, outfile)
-        
+    if numData == 10:
+        # finalData.pop(0)
+        # with open(fileName, 'w') as outfile:
+        #         json.dump(finalData, outfile)
         sys.exit()
                 
         
 def on_error(ws, error):
-    print(error)
+    print(1)
 
 def on_close(ws):
     print("### closed ###")
