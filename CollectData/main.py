@@ -8,50 +8,33 @@ import time
 import json 
 import sys
 
-lastTime = 0
-fileName = 'test.json'
-label = 8
+label = 5
+
+fileName = 'D-5-test.json'
 f = open(fileName,)
 finalData = json.load(f,)
-numData = -1
-numCurFrame = 0
-Left = []
-Right = []
-newData = []
 
+numData = 0
 
 def on_message(ws, message):
     global numData
-    global lastTime
-    global numCurFrame
 
     data = json.loads(message)
-    curTime = time.time() * 10 
     data['label'] = label
 
-    print("Numdata", numData)
-    print("Time: ", curTime)
-    print("LastTime: ", lastTime)
+    if data['hands'] and data['hands'][0]['type'] == "right" and len(data['hands']) == 1 : 
+        numData += 1
+        print("Numdata: ", numData)
+        finalData.append(data)
 
-    if curTime - lastTime >= 0.5 : 
-        lastTime = curTime
-        numCurFrame += 1
-        print("Numcurframe: ",numCurFrame)
-
-        if numCurFrame == 1:
-            numCurFrame = 0
-            numData += 1
-            print("Numdata: ", numData)
-
-    if numData == 10:
-        # finalData.pop(0)
-        # with open(fileName, 'w') as outfile:
-        #         json.dump(finalData, outfile)
+    if numData == 200:
+        with open(fileName, 'w') as outfile:
+                json.dump(finalData, outfile)
         sys.exit()
                 
         
 def on_error(ws, error):
-    print(1)
+    print(error)
 
 def on_close(ws):
     print("### closed ###")
